@@ -29,10 +29,24 @@ class RestaurantDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Fallback jika gambar gagal dimuat
                   Image.network(
                     'https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}',
                     height: 200,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 200,
+                        color: Colors.grey,
+                        child: Center(
+                          child: Icon(
+                            Icons.error,
+                            color: Colors.red,
+                            size: 50,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -120,7 +134,25 @@ class RestaurantDetailPage extends StatelessWidget {
               ),
             );
           } else if (provider.state == ResultState.Error) {
-            return Center(child: Text(provider.message));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Failed to load restaurant details',
+                    style: TextStyle(fontSize: 18, color: Colors.red),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Reload the restaurant details
+                      provider.fetchRestaurantDetail(id);
+                    },
+                    child: Text('Try Again'),
+                  ),
+                ],
+              ),
+            );
           } else {
             return Center(child: Text('No details available'));
           }
