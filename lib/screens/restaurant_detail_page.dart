@@ -1,5 +1,3 @@
-// lib/screens/restaurant_detail_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/restaurant_provider.dart';

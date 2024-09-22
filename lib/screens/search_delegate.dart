@@ -1,5 +1,3 @@
-// lib/screens/search_delegate.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/restaurant_provider.dart';
@@ -14,6 +12,7 @@ class RestaurantSearchDelegate extends SearchDelegate {
           icon: Icon(Icons.clear),
           onPressed: () {
             query = '';
+            showSuggestions(context); // Tampilkan kembali saran pencarian
           },
         ),
     ];
@@ -31,6 +30,12 @@ class RestaurantSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
+    if (query.isEmpty) {
+      return Center(
+        child: Text('Please enter a restaurant name or menu to search'),
+      );
+    }
+
     final provider = Provider.of<RestaurantProvider>(context, listen: false);
     provider.searchRestaurants(query);
 
@@ -75,6 +80,13 @@ class RestaurantSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Center(child: Text('Cari restoran berdasarkan nama atau menu'));
+    if (query.isEmpty) {
+      return Center(child: Text('Cari restoran berdasarkan nama atau menu'));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text('Searching for "$query"...'),
+    );
   }
 }

@@ -1,5 +1,3 @@
-// lib/providers/restaurant_provider.dart
-
 import 'package:flutter/material.dart';
 import '../models/restaurant_list_model.dart';
 import '../models/restaurant_detail_model.dart';
@@ -71,12 +69,14 @@ class RestaurantProvider extends ChangeNotifier {
       notifyListeners();
 
       final fetchedSearchResults = await apiService.searchRestaurants(query);
+
       // Access the restaurants list from the RestaurantSearchResult object
       if (fetchedSearchResults.restaurants.isEmpty) {
         _state = ResultState.NoData;
         _message = 'No restaurants found for "$query"';
       } else {
-        _searchResults = fetchedSearchResults.restaurants; // Assign the list of restaurants
+        _searchResults = fetchedSearchResults
+            .restaurants; // Update searchResults with the list of restaurants
         _state = ResultState.HasData;
       }
     } catch (e) {

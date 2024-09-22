@@ -1,5 +1,3 @@
-// lib/screens/restaurant_list_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/restaurant_provider.dart';
@@ -46,8 +44,9 @@ class RestaurantListPage extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   title: Text(restaurant.name),
-                  subtitle:
-                      Text('${restaurant.city} • Rating: ${restaurant.rating}'),
+                  subtitle: Text(
+                    '${restaurant.city} • Rating: ${restaurant.rating}',
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -61,7 +60,22 @@ class RestaurantListPage extends StatelessWidget {
               },
             );
           } else if (provider.state == ResultState.Error) {
-            return Center(child: Text(provider.message));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Failed to load restaurants'),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Memanggil ulang fetchAllRestaurants jika terjadi error
+                      provider.fetchAllRestaurants();
+                    },
+                    child: Text('Try Again'),
+                  ),
+                ],
+              ),
+            );
           } else {
             return Center(child: Text('No restaurants available'));
           }
