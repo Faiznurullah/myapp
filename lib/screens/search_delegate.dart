@@ -23,7 +23,7 @@ class RestaurantSearchDelegate extends SearchDelegate {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
-        close(context, null); // Menutup search
+        close(context, null); // Menutup pencarian
       },
     );
   }
@@ -53,6 +53,10 @@ class RestaurantSearchDelegate extends SearchDelegate {
                   'https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}',
                   width: 100,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons
+                        .error); // Error placeholder jika gambar gagal dimuat
+                  },
                 ),
                 title: Text(restaurant.name),
                 subtitle:

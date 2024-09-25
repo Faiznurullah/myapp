@@ -12,9 +12,8 @@ class ApiService {
     final response = await http.get(Uri.parse('${baseUrl}list'));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      // Use RestaurantListResponse model to handle the list response
       final restaurantList = RestaurantListResponse.fromJson(jsonData);
-      return restaurantList.restaurants; // Return the list of restaurants
+      return restaurantList.restaurants;
     } else {
       throw Exception('Failed to load restaurants');
     }
@@ -25,9 +24,8 @@ class ApiService {
     final response = await http.get(Uri.parse('${baseUrl}detail/$id'));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      // Use RestaurantDetailResponse model to handle the detail response
       final restaurantDetail = RestaurantDetailResponse.fromJson(jsonData);
-      return restaurantDetail.restaurant; // Return restaurant detail
+      return restaurantDetail.restaurant;
     } else {
       throw Exception('Failed to load restaurant details');
     }
@@ -38,8 +36,7 @@ class ApiService {
     final response = await http.get(Uri.parse('${baseUrl}search?q=$query'));
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      return RestaurantSearchResult.fromJson(
-          jsonData); // Gunakan model hasil pencarian
+      return RestaurantSearchResult.fromJson(jsonData);
     } else {
       throw Exception('Failed to search restaurants');
     }

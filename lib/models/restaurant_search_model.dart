@@ -1,25 +1,15 @@
-import '../models/restaurant_list_model.dart'; // Ganti dengan path model yang benar
+// restaurant_search_model.dart
+import '../models/restaurant_list_model.dart'; // Pastikan path ini benar
 
 class RestaurantSearchResult {
-  final bool error;
-  final int founded;
-  final List<Restaurant>
-      restaurants; // Menggunakan model Restaurant dari restaurant_list_model.dart
+  final List<Restaurant> restaurants;
 
-  RestaurantSearchResult({
-    required this.error,
-    required this.founded,
-    required this.restaurants,
-  });
+  RestaurantSearchResult({required this.restaurants});
 
   factory RestaurantSearchResult.fromJson(Map<String, dynamic> json) {
-    return RestaurantSearchResult(
-      error: json['error'],
-      founded: json['founded'],
-      restaurants: (json['restaurants'] as List)
-          .map((restaurant) => Restaurant.fromJson(
-              restaurant)) // Pastikan menggunakan model yang benar
-          .toList(),
-    );
+    var list = json['restaurants'] as List;
+    List<Restaurant> restaurantList =
+        list.map((i) => Restaurant.fromJson(i)).toList();
+    return RestaurantSearchResult(restaurants: restaurantList);
   }
 }

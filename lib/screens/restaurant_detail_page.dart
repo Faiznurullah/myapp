@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/restaurant_provider.dart';
+import '../providers/favorite_provider.dart';
+import '../models/restaurant.dart';
+import '../models/restaurant_detail_model.dart';
 
 class RestaurantDetailPage extends StatelessWidget {
   final String id;
@@ -9,15 +12,54 @@ class RestaurantDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Memanggil fetchRestaurantDetail saat halaman dibangun
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<RestaurantProvider>(context, listen: false)
           .fetchRestaurantDetail(id);
+      Provider.of<FavoriteProvider>(context, listen: false).loadFavorites();
     });
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Detail Restoran'),
+        actions: [
+          Consumer<RestaurantProvider>(
+            builder: (context, restaurantProvider, child) {
+              if (restaurantProvider.state == ResultState.HasData) {
+                var restaurantDetail = restaurantProvider.restaurantDetail!;
+                return Consumer<FavoriteProvider>(
+                  builder: (context, favoriteProvider, child) {
+                    // Mengecek apakah restoran ini merupakan favorit
+                    final isFavorite =
+                        favoriteProvider.isFavorite(restaurantDetail.id);
+
+                    return IconButton(
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavorite ? Colors.red : Colors.white,
+                      ),
+                      onPressed: () {
+                        // Membuat objek Restaurant dari RestaurantDetail
+                        final restaurant = Restaurant(
+                          id: restaurantDetail.id,
+                          name: restaurantDetail.name,
+                          description: restaurantDetail.description,
+                          pictureId: restaurantDetail.pictureId,
+                          city: restaurantDetail.city,
+                          rating: restaurantDetail.rating,
+                        );
+
+                        // Toggle favorit
+                        favoriteProvider.toggleFavorite(restaurant);
+                      },
+                    );
+                  },
+                );
+              } else {
+                return Container(); // Return empty container jika belum ada data
+              }
+            },
+          ),
+        ],
       ),
       body: Consumer<RestaurantProvider>(
         builder: (context, provider, child) {
@@ -29,7 +71,6 @@ class RestaurantDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Fallback jika gambar gagal dimuat
                   Image.network(
                     'https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}',
                     height: 200,
@@ -61,72 +102,16 @@ class RestaurantDetailPage extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 8),
-                        Text(
-                          'City: ${restaurant.city}',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        Text('City: ${restaurant.city}',
+                            style: TextStyle(fontSize: 16)),
                         SizedBox(height: 8),
-                        Text(
-                          'Rating: ${restaurant.rating}',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Address: ${restaurant.address}',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        Text('Rating: ${restaurant.rating}',
+                            style: TextStyle(fontSize: 16)),
                         SizedBox(height: 16),
                         Text(
                           restaurant.description,
-                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 16),
                         ),
-                        SizedBox(height: 16),
-                        Text(
-                          'Categories',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        Wrap(
-                          spacing: 8.0,
-                          children: restaurant.categories
-                              .map((category) =>
-                                  Chip(label: Text(category.name)))
-                              .toList(),
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          'Menu Makanan',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        ...restaurant.menus.foods.map((food) => ListTile(
-                              leading: Icon(Icons.food_bank),
-                              title: Text(food.name),
-                            )),
-                        SizedBox(height: 16),
-                        Text(
-                          'Menu Minuman',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        ...restaurant.menus.drinks.map((drink) => ListTile(
-                              leading: Icon(Icons.local_drink),
-                              title: Text(drink.name),
-                            )),
-                        SizedBox(height: 16),
-                        Text(
-                          'Customer Reviews',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        ...restaurant.customerReviews.map((review) => ListTile(
-                              leading: CircleAvatar(
-                                child: Text(review.name[0]),
-                              ),
-                              title: Text(review.name),
-                              subtitle: Text(review.review),
-                              trailing: Text(review.date),
-                            )),
                       ],
                     ),
                   ),
@@ -145,7 +130,6 @@ class RestaurantDetailPage extends StatelessWidget {
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      // Reload the restaurant details
                       provider.fetchRestaurantDetail(id);
                     },
                     child: Text('Try Again'),

@@ -1,28 +1,3 @@
-class RestaurantListResponse {
-  final bool error;
-  final String message;
-  final int count;
-  final List<Restaurant> restaurants;
-
-  RestaurantListResponse({
-    required this.error,
-    required this.message,
-    required this.count,
-    required this.restaurants,
-  });
-
-  factory RestaurantListResponse.fromJson(Map<String, dynamic> json) {
-    return RestaurantListResponse(
-      error: json['error'],
-      message: json['message'],
-      count: json['count'],
-      restaurants: (json['restaurants'] as List)
-          .map((restaurant) => Restaurant.fromJson(restaurant))
-          .toList(),
-    );
-  }
-}
-
 class Restaurant {
   final String id;
   final String name;
@@ -49,5 +24,18 @@ class Restaurant {
       city: json['city'],
       rating: json['rating'].toDouble(),
     );
+  }
+}
+
+class RestaurantListResponse {
+  final List<Restaurant> restaurants;
+
+  RestaurantListResponse({required this.restaurants});
+
+  factory RestaurantListResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['restaurants'] as List;
+    List<Restaurant> restaurantList =
+        list.map((i) => Restaurant.fromJson(i)).toList();
+    return RestaurantListResponse(restaurants: restaurantList);
   }
 }

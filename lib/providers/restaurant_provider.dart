@@ -15,6 +15,7 @@ class RestaurantProvider extends ChangeNotifier {
   List<Restaurant> _restaurants = [];
   RestaurantDetail? _restaurantDetail;
   List<Restaurant> _searchResults = [];
+  List<String> _favoriteRestaurants = []; // Menyimpan ID restoran favorit
   String _message = '';
   ResultState _state = ResultState.Loading;
 
@@ -24,6 +25,16 @@ class RestaurantProvider extends ChangeNotifier {
   List<Restaurant> get searchResults => _searchResults;
   String get message => _message;
   ResultState get state => _state;
+  List<String> get favoriteRestaurants => _favoriteRestaurants;
+
+  void toggleFavorite(String id) {
+    if (_favoriteRestaurants.contains(id)) {
+      _favoriteRestaurants.remove(id);
+    } else {
+      _favoriteRestaurants.add(id);
+    }
+    notifyListeners();
+  }
 
   // Fetch all restaurants
   Future<void> fetchAllRestaurants() async {

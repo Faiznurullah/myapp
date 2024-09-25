@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/restaurant_provider.dart';
 import 'restaurant_detail_page.dart';
 import 'search_delegate.dart';
+import 'favorite_restaurant.dart';
+import 'settings_page.dart'; // Import halaman favorit
 
 class RestaurantListPage extends StatelessWidget {
   @override
@@ -23,6 +25,27 @@ class RestaurantListPage extends StatelessWidget {
               showSearch(
                 context: context,
                 delegate: RestaurantSearchDelegate(),
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.favorite), // Ikon untuk halaman favorit
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      FavoritePage(), // Navigasi ke halaman favorit
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
               );
             },
           ),
